@@ -15,8 +15,9 @@ Linux:
 #### Way #2 (RECCOMENDED):
 - Creating a text file and instead of running ``python arkfetch.py`` you run ``python arkfetch.py yourfile.txt``
 - Inside of that text file, you can put
+
+LINES:  |  TEXT:
 ````
-LINES:     TEXT:
 1          Color of your ascii art
 2          Color of the rest of the text
 3          The text that shows up after running the script
