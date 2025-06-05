@@ -1,0 +1,13 @@
+ubuntu/debian:
+sudo apt update
+sudo apt install wmctrl
+
+fedora:
+sudo dnf install wmctrl
+
+Arch:
+sudo pacman -Sy wmctrl
+
+needed pip packages:
+
+psutil
