@@ -14,7 +14,7 @@ Linux:
 - Changing the Python file to whatever you want it to be
 #### Way #2 (RECCOMENDED):
 - Creating a text file and instead of running ``python arkfetch.py`` you run ``python arkfetch.py yourfile.txt``
-- Inside of that text file, you can put
+- Inside of that text file, you can put:
 
 LINES:  |  TEXT:
 ````
