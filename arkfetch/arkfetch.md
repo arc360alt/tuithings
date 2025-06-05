@@ -59,3 +59,7 @@ i use mint btw
             '-MMMMMMMMMMMMM-'               
                ``-:::::-``
 ```
+
+## Examples:
+- Arch Linux
+![image](https://github.com/user-attachments/assets/8ee3db3e-c855-4e00-a265-59b6671be1bf)
