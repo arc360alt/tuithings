@@ -60,12 +60,13 @@ NERD_FONT_SYMBOLS = {
     "Kernel": "",     # nf-fa-gear (from Fastfetch, used for Kernel and Bios)
     "Shell": "",      # nf-md-harddisk (from Fastfetch, surprisingly used for Shell too - this might be a typo in their config or intentional for a specific look)
     "Terminal": "",   # nf-dev-terminal (from Fastfetch)
-    "WM": "",         # nf-md-palette (from Fastfetch, used for DE, LM, WM)
+    "WM": "", 
     "DE": "",         # nf-md-palette (from Fastfetch)
     "LM": "",         # Display Manager (Fastfetch uses 'lm' - login manager)
     "User": "󰈡",       # nf-fa-user (Keeping previous, not explicitly in fastfetch config)
     "Uptime": "󰃭",      # nf-md-timer (Keeping previous, not explicitly in fastfetch config)
-    "DateTime": "",    # nf-fa-clock (Keeping previous, not explicitly in fastfetch config)
+    "DateTime": "", 
+    # nf-fa-clock (Keeping previous, not explicitly in fastfetch config)
     "OS Age": "󰃰",      # nf-fa-clock_o (Keeping previous, not explicitly in fastfetch config)
     "Packages": "󰏖", # nf-md-package (from Fastfetch)
     "Display Manager": "", # nf-md-palette (Mapping 'lm' to this for Arkfetch)
@@ -93,7 +94,8 @@ def get_system_info():
     info['OS'] = platform.system()
     if info['OS'] == 'Linux':
         try:
-            lsb_release_output = subprocess.check_output(['lsb_release', '-sd'], universal_newlines=True).strip()
+            lsb_release_output = subprocess.check_output(['lsb_release', '-sd'], 
+universal_newlines=True).strip()
             info['OS'] = f"{lsb_release_output} {platform.machine()}"
         except (FileNotFoundError, subprocess.CalledProcessError):
             info['OS'] = f"{info['OS']} {platform.version().split('-')[0].strip()} {platform.machine()}" # Fallback
@@ -290,7 +292,7 @@ def get_system_info():
     if info['OS'].startswith('Linux'):
         info['WM'] = 'N/A'
         info['DE'] = 'N/A'
-        
+
         if os.environ.get('XDG_CURRENT_DESKTOP'):
             info['DE'] = os.environ.get('XDG_CURRENT_DESKTOP')
             info['WM'] = info['DE']
@@ -323,16 +325,6 @@ def get_system_info():
         elif info['WM'].lower() == 'lxde': info['WM'] = 'LXDE'
         elif info['WM'].lower() == 'budgie': info['WM'] = 'Budgie'
         elif info['WM'].lower() == 'pantheon': info['WM'] = 'Pantheon'
-        elif info['WM'].lower() == 'i3': info['WM'] = 'i3'
-
-        if info['DE'].lower() == 'gnome': info['DE'] = 'GNOME'
-        elif info['DE'].lower() == 'kde': info['DE'] = 'KDE Plasma'
-        elif info['DE'].lower() == 'xfce': info['DE'] = 'XFCE'
-        elif info['DE'].lower() == 'cinnamon': info['DE'] = 'Cinnamon'
-        elif info['DE'].lower() == 'mate': info['DE'] = 'MATE'
-        elif info['DE'].lower() == 'lxde': info['DE'] = 'LXDE'
-        elif info['DE'].lower() == 'budgie': info['DE'] = 'Budgie'
-        elif info['DE'].lower() == 'pantheon': info['DE'] = 'Pantheon'
 
     else:
         info['WM'] = 'N/A'
@@ -364,7 +356,7 @@ def get_system_info():
         else: # Try systemd-related methods
             try:
                 dm_output = subprocess.check_output('systemctl status display-manager.service', shell=True, universal_newlines=True, stderr=subprocess.PIPE)
-                match = re.search(r'Loaded: loaded \(.*display-manager\.service; enabled;.*\)\n\s+Active: active \(running\)\s+since (.*)', dm_output)
+                match = re.search(r'Loaded: loaded \(.*display-manager\.service;\nenabled;.*\)\n\s+Active: active \(running\)\s+since (.*)', dm_output)
                 if match:
                     # Parse the output to find common DMs
                     if 'gdm' in dm_output: info['LM'] = 'GDM'
@@ -465,6 +457,7 @@ def load_ascii_art(file_path=None):
     ascii_art_color_name = "white"
     text_color_name = "white"
     footer_message = "ArkFetch: Your System Overview"
+    selected_theme_from_file = None # NEW: Variable to store theme from file
 
     default_ascii_art = [
         "    /\\    ",
@@ -476,7 +469,7 @@ def load_ascii_art(file_path=None):
     art_lines = []
 
     def process_art_file_content(lines_from_file):
-        nonlocal ascii_art_color_name, text_color_name, footer_message, art_lines
+        nonlocal ascii_art_color_name, text_color_name, footer_message, art_lines, selected_theme_from_file
         
         if len(lines_from_file) >= 1 and lines_from_file[0].strip():
             ascii_art_color_name = lines_from_file[0].strip().lower()
@@ -485,7 +478,18 @@ def load_ascii_art(file_path=None):
         if len(lines_from_file) >= 3 and lines_from_file[2].strip():
             footer_message = lines_from_file[2].strip()
         
-        art_lines = lines_from_file[3:]
+        # NEW: Read theme from 4th line (index 3)
+        if len(lines_from_file) >= 4 and lines_from_file[3].strip():
+            theme_choice_str = lines_from_file[3].strip().lower()
+            if theme_choice_str == "t1":
+                selected_theme_from_file = 1
+            elif theme_choice_str == "t2":
+                selected_theme_from_file = 2
+            else:
+                # Optionally warn about invalid theme choice in file
+                print(f"ArkFetch: Warning: Invalid theme choice '{theme_choice_str}' in ASCII art file line 4. Ignoring.")
+
+        art_lines = lines_from_file[4:] # NEW: Start art content from line 5 (index 4)
 
         if art_lines:
             max_len = max(len(line) for line in art_lines)
@@ -499,7 +503,7 @@ def load_ascii_art(file_path=None):
                 lines = [line.rstrip() for line in f]
             process_art_file_content(lines)
         except FileNotFoundError:
-            print(f"ArkFetch: Warning: ASCII art file '{file_path}' not found. Using default 'A' art and colors.")
+            print(f"ArkFetch: Warning: ASCII art file '{file_path}' not found.\nUsing default 'A' art and colors.")
             art_lines = default_ascii_art
         except Exception as e:
             print(f"ArkFetch: Warning: Error reading ASCII art file '{file_path}': {e}. Using default 'A' art and colors.")
@@ -519,7 +523,7 @@ def load_ascii_art(file_path=None):
     ascii_art_color_code = ANSI_COLORS.get(ascii_art_color_name, ANSI_COLORS["white"])
     text_color_code = ANSI_COLORS.get(text_color_name, ANSI_COLORS["white"])
     
-    return ascii_art_color_code, text_color_code, art_lines, footer_message
+    return ascii_art_color_code, text_color_code, art_lines, footer_message, selected_theme_from_file
 
 def generate_color_splotches():
     """Generates a string of 8 standard terminal color blocks."""
@@ -535,12 +539,13 @@ def get_display_width(text_with_ansi):
 
 def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code, ascii_art_content, theme_id):
     output_lines = [] 
-    info_display_lines = [] # This will hold the final, potentially boxed, lines for display
+    info_display_lines = []
 
     # --- Preprocessing for Theme 2: Determine max_key_display_width for consistent alignment ---
     max_key_display_width = 0 
     
-    # List of all potential items that might be displayed in Theme 2 (for consistent key alignment)
+    # List of all potential items that might be displayed 
+    # in Theme 2 (for consistent key alignment)
     # Using the structure from Fastfetch config to determine max width
     all_potential_items_for_width = [
         ("PC", " PC"),
@@ -555,11 +560,11 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
         ("DE", " DE"),
         ("LM", "│ ├"), # Display Manager (Fastfetch's 'lm')
         ("WM", "│ ├"),
-        ("Theme", "│ ├󰉼"), # Fastfetch's 'wmtheme'
+        ("Theme", "│ ├󰉼"), # WM Theme
         ("Terminal", "└ └"),
-        ("OS Age", " OS Age"), # Fastfetch has leading space, no icon here
-        ("Uptime", " Uptime"), # Fastfetch has leading space, no icon here
-        ("DateTime", " DateTime"), # Fastfetch has leading space, no icon here
+        ("OS Age", " OS Age"), # No icon for OS Age in fastfetch
+        ("Uptime", " Uptime"),    # No icon for Uptime in fastfetch
+        ("DateTime", " DateTime"), # No icon for DateTime in fastfetch
         ("User", "󰈡 User") # User isn't in fastfetch's main modules, but we'll try to include
     ]
 
@@ -569,7 +574,7 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
     
     # Fastfetch's config shows a consistent width for its custom format bars (52 horizontal chars).
     # We'll use this for alignment of our boxes.
-    FASTFETCH_BAR_CONTENT_WIDTH = 52 # This is the width of the dashes inside the box: "──────"
+    FASTFETCH_BAR_CONTENT_WIDTH = 52
     
     # --- Populate info_display_lines based on Theme ---
     if theme_id == 1:
@@ -591,7 +596,7 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
         theme2_category_map = {
             "Hardware": [("PC", " PC", None, False),
                          ("CPU", "│ ├", None, False),
-                         ("GPU", "│ ├󰍛", None, False), # Using Fastfetch's GPU icon
+                ("GPU", "│ ├󰍛", None, False), # Using Fastfetch's GPU icon
                          ("Memory", "│ ├󰍛", None, False),
                          ("Disk", "└ └", None, True)], # Last item in section gets └ └
             "Software": [("OS", " OS", None, False),
@@ -603,7 +608,7 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
                                    ("LM", "│ ├", None, False), # Display Manager, using Fastfetch's 'lm'
                                    ("WM", "│ ├", None, False),
                                    ("Theme", "│ ├󰉼", None, False), # WM Theme
-                                   ("Terminal", "└ └", None, True)],
+                            ("Terminal", "└ └", None, True)],
             "Uptime / Age / DT": [("OS Age", " OS Age", "0 days", False), # No icon for OS Age in fastfetch
                                   ("Uptime", " Uptime", None, False),    # No icon for Uptime in fastfetch
                                   ("DateTime", " DateTime", None, True)] # No icon for DateTime in fastfetch
@@ -644,7 +649,7 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
                             # Use consistent prefix for all GPU lines, like Fastfetch
                             prefix = "│ ├" if not is_last_in_section else "└ └"
                             # If it's the first GPU entry, include the icon and "GPU" text
-                            key_part_for_gpu = f"{formatted_key_prefix.lstrip('│ ├└ ')}" if j == 0 else "   " # Leave space for icon/text if not first
+                            key_part_for_gpu = f"{formatted_key_prefix.lstrip('│ ├└ ')}" if j == 0 else "   "
                             
                             # Reconstruct the line for multi-GPU
                             final_key_part = f"{prefix}{key_part_for_gpu.ljust(max_key_display_width - get_display_width(prefix))}"
@@ -674,7 +679,8 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
                 # This ensures the box matches Fastfetch's appearance
                 category_name_display_width = get_display_width(category_name)
                 
-                # Fastfetch's "┌──────────────────────Hardware──────────────────────┐"
+                # Fastfetch's 
+                "┌──────────────────────Hardware──────────────────────┐"
                 # The category name is exactly in the middle of the bar.
                 # Total bar length is FASTFETCH_BAR_CONTENT_WIDTH + 2 for corners.
                 # Left dashes = (FASTFETCH_BAR_CONTENT_WIDTH - category_name_display_width) / 2
@@ -697,7 +703,7 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
                     # The content lines need to be padded to align with the box width.
                     # The box width is (FASTFETCH_BAR_CONTENT_WIDTH + 2 for corners)
                     # We assume 1 space of padding on each side inside the box, so FASTFETCH_BAR_CONTENT_WIDTH - 2
-                    padding_needed = FASTFETCH_BAR_CONTENT_WIDTH - display_len # This ensures alignment with the content width of the Fastfetch bar
+                    padding_needed = FASTFETCH_BAR_CONTENT_WIDTH - display_len
                     info_display_lines.append(f"{line}{' ' * padding_needed}") 
                 
                 # Category box bottom border
@@ -714,14 +720,16 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
             user_key_string = f"󰈡 User"
             user_line_content = f"{user_key_string.ljust(max_key_display_width)}: {user_val}"
 
-            # Calculate content width for the user box. We'll use the same FASTFETCH_BAR_CONTENT_WIDTH.
+            # Calculate content width for the user box.
+            # We'll use the same FASTFETCH_BAR_CONTENT_WIDTH.
             user_box_content_width = FASTFETCH_BAR_CONTENT_WIDTH 
             
             # User box doesn't have a category name merged into the top border.
             user_top_border = f"{BOX_CHARS['top_left']}{BOX_CHARS['horizontal'] * user_box_content_width}{BOX_CHARS['top_right']}"
             info_display_lines.append(color_text(user_top_border, 'bright_black'))
             
-            # Content line for user info. Pad to the FASTFETCH_BAR_CONTENT_WIDTH.
+            # Content line for user info.
+            # Pad to the FASTFETCH_BAR_CONTENT_WIDTH.
             padding_needed_user = user_box_content_width - get_display_width(user_line_content)
             info_display_lines.append(f"{user_line_content}{' ' * padding_needed_user}")
 
@@ -748,15 +756,24 @@ def generate_arkfetch_output(system_info, ascii_art_color_code, text_color_code,
 
 def main():
     parser = argparse.ArgumentParser(description="ArkFetch: A simple system information fetcher.")
-    parser.add_argument('-t', '--theme', type=int, default=1, choices=[1, 2],
-                        help="Select display theme: 1 (original) or 2 (categorized, with lines and icons). Default is 1.")
+    # Theme argument is now optional, with no default, so we can detect if it was *explicitly* provided.
+    parser.add_argument('-t', '--theme', type=int, choices=[1, 2],
+                        help="Select display theme: 1 (original) or 2 (categorized, with lines and icons). Overrides theme specified in ASCII art file.")
     parser.add_argument('ascii_art_file', nargs='?', help="Optional path to a custom ASCII art file.")
     args = parser.parse_args()
 
     ascii_art_file = args.ascii_art_file
-    selected_theme = args.theme
+    
+    # Get all information from load_ascii_art, including the new theme choice from file
+    ascii_art_color_code, text_color_code, ascii_art_content, footer_message, selected_theme_from_file = load_ascii_art(ascii_art_file)
 
-    ascii_art_color_code, text_color_code, ascii_art_content, footer_message = load_ascii_art(ascii_art_file)
+    # Determine final theme based on precedence
+    selected_theme = 1 # Default theme if no other is specified
+    if args.theme is not None: # Command line argument takes highest precedence
+        selected_theme = args.theme
+    elif selected_theme_from_file is not None: # Then check the theme from file
+        selected_theme = selected_theme_from_file
+    # Else, selected_theme remains 1 (the default)
 
     print("Gathering system information...")
     system_info = get_system_info()
