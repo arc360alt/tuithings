@@ -22,7 +22,8 @@ LINES:  |  TEXT:
 1          Color of your ascii art
 2          Color of the rest of the text
 3          The text that shows up after running the script
-4-end      Your ascii art
+4          The theme you want to use, EX: t1 or t2
+5-end      Your ascii art
 ````
 List of usable colors for lines 1-2:
 
@@ -39,12 +40,14 @@ You can see what colors they come out to in the python file.
 # THEMES
 - Use the argument -t1 for the original theme
 - Use argument -t2 for the new theme that is basied off of [this](https://raw.githubusercontent.com/harilvfs/fastfetch/refs/heads/old-days/fastfetch/config.jsonc) FastFetch configuration
+- Put t1 or t2 in line 4 of your config to choose the theme whithout having to spesify it in the command
 
 EXAMPLE CONFIGURATION FOR MINT USERS:
 ```
 green
 white
 i use mint btw
+t2
              ...-:::::-...                 
           .-MMMMMMMMMMMMMMM-.             
       .-MMMM`..-:::::::-..`MMMM-.         
