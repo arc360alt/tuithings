@@ -6,6 +6,7 @@ Windows: I personaly dont use windows anymore, so i do not know.
 Linux:
 - Download the Python File
 - Install psutil and wmctrl via pip
+- Install [Nerd Fonts](https://www.nerdfonts.com/) and set it as your terminal defualt
 - Run the python file
 
 # Configuration
@@ -34,6 +35,10 @@ bg colors:
 Just add bg_ to any of the normal colors
 
 You can see what colors they come out to in the python file.
+
+# THEMES
+- Use the argument -t1 for the original theme
+- Use argument -t2 for the new theme that is basied off of [this](https://raw.githubusercontent.com/harilvfs/fastfetch/refs/heads/old-days/fastfetch/config.jsonc) FastFetch configuration
 
 EXAMPLE CONFIGURATION FOR MINT USERS:
 ```
@@ -64,3 +69,5 @@ i use mint btw
 ## Examples:
 - Arch Linux
 ![image](https://github.com/user-attachments/assets/8ee3db3e-c855-4e00-a265-59b6671be1bf)
+- New Theme using Nerd Fonts
+![image](https://github.com/user-attachments/assets/08ad935d-9d13-4083-9253-09b466de4fc9)
