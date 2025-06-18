@@ -1,0 +1,4 @@
+pygame
+ursina
+numpy
+pyopencl
