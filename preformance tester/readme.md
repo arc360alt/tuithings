@@ -1,11 +1,12 @@
-```
+
+
 # Performance Testing Suite
 
 This repository contains a comprehensive suite of Python scripts designed to test various aspects of your system's performance, including 2D and 3D graphics rendering, CPU computation (light and heavy), memory management, file I/O operations, and GPU compute (both simulated and actual via OpenCL), as well as network loopback performance.
 
-The `performance_orchestrator.py` script runs each test sequentially and then compiles their results into a single, easy-to-read overview in your terminal.
+The `runme.py` script runs each test sequentially and then compiles their results into a single, easy-to-read overview in your terminal.
 
----
+
 
 ## 🚀 Getting Started
 
@@ -13,8 +14,8 @@ The `performance_orchestrator.py` script runs each test sequentially and then co
 
 Ensure all the Python scripts are in the same directory:
 
-```
 
+```
 your\_project\_folder/
 ├── performance\_orchestrator.py
 ├── 2dtest.py
@@ -28,8 +29,8 @@ your\_project\_folder/
 ├── nettest\_server.py
 ├── nettest\_client.py
 └── requirements.txt
+```
 
-````
 
 ### 2. Prerequisites
 
@@ -40,13 +41,15 @@ your\_project\_folder/
 
 Navigate to your project directory in the terminal or command prompt and run:
 
-```bash
+```
 pip install -r requirements.txt
 ````
 
 ### 4\. Install OS-Specific Dependencies (Crucial for GPU Tests\!)
 
 The `real_gputest.py` (Actual GPU Compute Test) relies on OpenCL, which requires system-level drivers and development tools.
+
+# You need some Build Tools to install the pyopencl package, heres how!
 
 #### 4.1. For Windows Users:
 
@@ -82,7 +85,7 @@ The `real_gputest.py` (Actual GPU Compute Test) relies on OpenCL, which requires
     ```
   * **OpenCL Drivers/Development Libraries:**
       * **For AMD GPUs (ROCm):** Follow the instructions on AMD's ROCm documentation for your specific Linux distribution: [https://rocm.docs.amd.com/en/latest/](https://rocm.docs.amd.com/en/latest/). You'll typically need to add their repositories and install packages like `amdgpu-install` and then use `amdgpu-install --usecase=opencl`.
-      * **For NVIDIA GPUs:** Install the **CUDA Toolkit** for Linux. This includes the OpenCL driver. Follow NVIDIA's official installation guide for your specific distribution: [https://developer.nvidia.com/cuda-downloads](https://developer.nvidia.com/cuda-downloads).
+      * **For NVIDIA GPUs:** Install the **CUDA Toolkit** for Linux. This includes the OpenCL driver. Follow NVIDIA's official installation guide for your specific distribution: [https://developer.nvidia.com/cuda-downloads](https://developer.nvidia.com/cuda-downloads/).
       * **For Intel CPUs/Integrated Graphics:** You might need the `intel-opencl-icd` package or Intel's specific runtime.
         ```bash
         sudo apt install intel-opencl-icd
@@ -99,7 +102,7 @@ The `real_gputest.py` (Actual GPU Compute Test) relies on OpenCL, which requires
 Once all prerequisites and Python packages are installed, simply run the orchestrator script from your terminal:
 
 ```bash
-python performance_orchestrator.py
+python runme.py
 ```
 
 The script will sequentially execute each test. Graphical tests (2D Pygame, 3D Ursina) will open and close their windows. All test output will be captured and processed by the orchestrator, with a final summary printed at the end.
@@ -172,6 +175,3 @@ The network test fails, usually indicating a problem with the server.
       * **Check Server Output:** Look closely at the `performance_orchestrator.py`'s output for any errors or warnings related to `nettest_server.py` when it attempts to start it.
 
 <!-- end list -->
-
-```
-```
