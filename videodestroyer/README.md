@@ -1,3 +1,5 @@
+# Just use [https://ohgodwhat.arc360hub.com](https://ohgodwhat.arc360hub.com) as its the same thing but you can just use a website instead
+
 # Do your videos look too good?
 ## This app fixes that!
 
